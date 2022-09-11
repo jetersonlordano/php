@@ -32,6 +32,16 @@ echo  # nova linha
 echo 'Apache2 instalado'
 echo  # nova linha
 
+# Adiciona o PPA do PHP > 8
+#sudo add-apt-repository ppa:ondrej/php -y
+#sudo add-apt-repository ppa:ondrej/apache2 -y
+#sudo apt update -y
+
+# remove o PPA do PHP > 8
+#sudo add-apt-repository --remove ppa:ondrej/php
+#sudo ppa-purge ppa:ondrej/php
+#sudo apt update -y
+
 
 # Instala o PHP e algumas extensões 
 sudo apt install php$PHP_VERSION php$PHP_VERSION-cli libapache2-mod-php$PHP_VERSION php$PHP_VERSION-mysql php$PHP_VERSION-curl php$PHP_VERSION-memcached php$PHP_VERSION-dev php$PHP_VERSION-pgsql php$PHP_VERSION-sqlite3 php$PHP_VERSION-mbstring php$PHP_VERSION-gd php$PHP_VERSION-xmlrpc php$PHP_VERSION-xml php$PHP_VERSION-zip php$PHP_VERSION-bcmath php$PHP_VERSION-soap php$PHP_VERSION-intl php$PHP_VERSION-readline php$PHP_VERSION-tokenizer php$PHP_VERSION-imagick -y
@@ -61,7 +71,7 @@ sudo sed -i -e 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' $PHP_INI
 
 
 # Instalar Xdebug
-cd ~/Downloads
+cd Downloads
 PHP_INFO=$(php -i)
 sudo curl -X POST -d "data=$PHP_INFO&submit=Analyse my phpinfo() output" https://xdebug.org/wizard >> xdebug.html
 
@@ -73,18 +83,18 @@ PHP_API_NR=$(grep -o "PHP API nr:[^li]*" xdebug.html)
 PHP_API_NR=${PHP_API_NR/PHP API nr:<\/b> }
 PHP_API_NR=${PHP_API_NR/<\/}
 
-sudo wget -c ~/Downloads/$XDEBUG_LINK
+sudo wget -c $XDEBUG_LINK
 sudo tar -xvzf xdebug-*.tgz
-
-cd ~/Downloads/$XDEBUG_VERSION
+cd $XDEBUG_VERSION
 sudo phpize
 sudo ./configure
 sudo make
 sudo cp modules/xdebug.so /usr/lib/php/$PHP_API_NR
 
-sudo rm -R ~/Downloads/xdebug*
-sudo rm ~/Downloads/package.xml
+sudo rm -R xdebug*
+sudo rm package.xml
 
+XDEBUG_CONF = "/etc/php/$PHP_VERSION/apache2/conf.d/99-xdebug.ini"
 XDEBUG_CONF="/etc/php/$PHP_VERSION/apache2/conf.d/99-xdebug.ini"
 sudo touch $XDEBUG_CONF
 sudo sh -c "echo zend_extension = xdebug >> $XDEBUG_CONF"
@@ -116,7 +126,7 @@ sudo chmod -R 0777 /var/www
 
 
 # Cria arquivo info.php
-sudo rm /var/www/html
+sudo rm /var/www/html/info.php
 echo '<?php phpinfo();' >> /var/www/html/info.php
 sudo chmod -R 0777 /var/www/html/info.php
 
@@ -199,9 +209,9 @@ echo  # nova linha
 #echo "Para Chrome Windows com WSL importe o arquivo server.crt"
 echo 'Concluído! Abra o link http://localhost/html/info.php'
 
-exit
+sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$MYSQL_PASSWORD';"
 
-sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$MYSQL_PASSWORD'; flush privileges;exit;"
+sudo mysql -u root -p$MYSQL_PASSWORD -e "flush privileges;"
 
 sudo mysql_secure_installation <<EOF
 
@@ -216,7 +226,6 @@ EOF
 
 
 # Instala phpmyadmin - Desativar componente de validadeção de senha para evitar erro no phpmyadmin
-MYSQL_COMPONENT='file://component_validate_password'
 sudo mysql -u root -p$MYSQL_PASSWORD -e 'UNINSTALL COMPONENT "file://component_validate_password";'
 
 sudo apt install phpmyadmin -y
