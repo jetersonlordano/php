@@ -9,9 +9,12 @@ MYSQL_PASSWORD="MinhaNovaSenha"
 
 # Atualiza os pacotes
 sudo apt update && sudo apt full-upgrade -y
+sudo dpkg --configure -a
+sudo apt install -f -y
 
 # Instala alguns pacotes necessários
-sudo apt install software-properties-common curl libssl-dev autoconf automake -y
+sudo apt install software-properties-common curl libssl-dev autoconf automake javascript-common -y
+
 
 # Ferramentas que eu uso no dia a dia
 # Remova se não precisar
@@ -44,7 +47,8 @@ echo  # nova linha
 
 
 # Instala o PHP e algumas extensões 
-sudo apt install php$PHP_VERSION php$PHP_VERSION-cli libapache2-mod-php$PHP_VERSION php$PHP_VERSION-mysql php$PHP_VERSION-curl php$PHP_VERSION-memcached php$PHP_VERSION-dev php$PHP_VERSION-pgsql php$PHP_VERSION-sqlite3 php$PHP_VERSION-mbstring php$PHP_VERSION-gd php$PHP_VERSION-xmlrpc php$PHP_VERSION-xml php$PHP_VERSION-zip php$PHP_VERSION-bcmath php$PHP_VERSION-soap php$PHP_VERSION-intl php$PHP_VERSION-readline php$PHP_VERSION-tokenizer php$PHP_VERSION-imagick -y
+sudo apt install php$PHP_VERSION php$PHP_VERSION-common php$PHP_VERSION-cli php$PHP_VERSION-fpm libapache2-mod-php libapache2-mod-php$PHP_VERSION php$PHP_VERSION-mysql php$PHP_VERSION-curl php$PHP_VERSION-memcached php$PHP_VERSION-dev php$PHP_VERSION-pgsql php$PHP_VERSION-sqlite3 php$PHP_VERSION-mbstring php$PHP_VERSION-gd php$PHP_VERSION-xmlrpc php$PHP_VERSION-xml php$PHP_VERSION-zip php$PHP_VERSION-bcmath php$PHP_VERSION-soap php$PHP_VERSION-intl php$PHP_VERSION-readline php$PHP_VERSION-tokenizer php$PHP_VERSION-imagick -y
+
 
 echo  # nova linha
 echo 'PHP instalado'
@@ -91,8 +95,12 @@ sudo ./configure
 sudo make
 sudo cp modules/xdebug.so /usr/lib/php/$PHP_API_NR
 
+
 sudo rm -R xdebug*
 sudo rm package.xml
+cd ~
+sudo rm -R ~/Downloads/xdebug*
+sudo rm ~/Downloads/package.xml
 
 XDEBUG_CONF = "/etc/php/$PHP_VERSION/apache2/conf.d/99-xdebug.ini"
 XDEBUG_CONF="/etc/php/$PHP_VERSION/apache2/conf.d/99-xdebug.ini"
@@ -144,11 +152,8 @@ sudo a2enmod headers && sudo service apache2 restart
 
 sudo a2enmod ssl && sudo service apache2 restart
 
-echo 'Concluído! Abra o link http://localhost/html/info.php'
 echo  # nova linha
-
-echo  # nova linha
-echo 'Gerar certificado SSL'
+echo 'Certificado SSL'
 echo  # nova linha
 
 # Atualiza os pacotes
@@ -200,30 +205,30 @@ echo "Certificado SSL Configurado"
 # Reinicia o Apache
 sudo service apache2 restart
 
-# Configuração Manual
+
 echo  # nova linha
-echo 'Configuração Manual:'
 echo  # nova linha
-echo "Faça a importação do arquivo /etc/apache2/ssl/localhost.pem nos navegadores que desejar"
+echo "Instalação do phpMyadmin"
 echo  # nova linha
-#echo "Para Chrome Windows com WSL importe o arquivo server.crt"
-echo 'Concluído! Abra o link http://localhost/html/info.php'
+echo  # nova linha
+
+
+echo  # nova linha
+read -r -p "Digite sua nova senha Mysql: " MYSQL_PASSWORD
+
+echo "Sua senha é: $MYSQL_PASSWORD"
+
+echo  # nova linha
 
 sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$MYSQL_PASSWORD';"
 
 sudo mysql -u root -p$MYSQL_PASSWORD -e "flush privileges;"
 
-sudo mysql_secure_installation <<EOF
+echo  # nova linha
+echo "Nas configurações selecione Y na primeira pergunta, sua senha mysql: $MYSQL_PASSWORD sempre que pedir e Y no restante"
+echo  # nova linha
 
-y
-$MYSQL_PASSWORD
-$MYSQL_PASSWORD
-y
-y
-y
-y
-EOF
-
+sudo mysql_secure_installation
 
 # Instala phpmyadmin - Desativar componente de validadeção de senha para evitar erro no phpmyadmin
 sudo mysql -u root -p$MYSQL_PASSWORD -e 'UNINSTALL COMPONENT "file://component_validate_password";'
@@ -249,10 +254,11 @@ echo #Nova Linha
 echo 'Se alguma coisa no PHP não funcionar. Ative o módulo correspondente.'
 echo #Nova Linha
 
-echo 'Concluido'
-
-
-
-
-
-
+# Configuração Manual
+echo  # nova linha
+echo 'Configuração Manual:'
+echo  # nova linha
+echo "Faça a importação do arquivo /etc/apache2/ssl/localhost.pem nos navegadores que desejar"
+echo  # nova linha
+#echo "Para Chrome Windows com WSL importe o arquivo server.crt"
+echo 'Concluído! Abra o link http://localhost/html/info.php'
