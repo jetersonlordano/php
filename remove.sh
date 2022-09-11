@@ -46,6 +46,7 @@ echo  # nova linha
 
 # Remove phpmyadmin
 sudo apt remove --purge phpmyadmin* -y
+sudo apt remove javascript-common -y
 sudo rm -rf /etc/phpmyadmin
 echo  # nova linha
 echo "phpmyadmin removido"
