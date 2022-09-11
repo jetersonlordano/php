@@ -5,6 +5,7 @@ PHP_INI="/etc/php/$PHP_VERSION/apache2/php.ini"
 GIT_USER="Jeterson Lordano"
 GIT_EMAIL="jetersonlordano@gmail.com"
 SUBJ="/C=BR/ST=Parana/L=Cafelandia/O=Jeterson Studio/OU=Jeterson Studio/CN=localhost/emailAddress=jeterson@gmail.com"
+MYSQL_PASSWORD="MinhaNovaSenha"
 
 # Atualiza os pacotes
 sudo apt update && sudo apt full-upgrade -y
@@ -12,17 +13,17 @@ sudo apt update && sudo apt full-upgrade -y
 # Instala alguns pacotes necessários
 sudo apt install software-properties-common curl libssl-dev autoconf automake -y
 
+# Ferramentas que eu uso no dia a dia
+# Remova se não precisar
+
 # Instala e configura o Git
 sudo apt install git -y
 git config --global user.name $GIT_USER
 git config --global user.email $GIT_EMAIL
 git config --global credential.helper cache
 git config --list
-echo  # nova linha
-echo 'Git instalado e configurado'
-echo  # nova linha
 
-# Ferramentas que eu uso no dia a dia
+# traceroute
 sudo apt install net-tools traceroute -y
 
 # Instala o Apache2
@@ -60,7 +61,7 @@ sudo sed -i -e 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' $PHP_INI
 
 
 # Instalar Xdebug
-cd Downloads
+cd ~/Downloads
 PHP_INFO=$(php -i)
 sudo curl -X POST -d "data=$PHP_INFO&submit=Analyse my phpinfo() output" https://xdebug.org/wizard >> xdebug.html
 
@@ -72,16 +73,17 @@ PHP_API_NR=$(grep -o "PHP API nr:[^li]*" xdebug.html)
 PHP_API_NR=${PHP_API_NR/PHP API nr:<\/b> }
 PHP_API_NR=${PHP_API_NR/<\/}
 
-sudo wget -c $XDEBUG_LINK
+sudo wget -c ~/Downloads/$XDEBUG_LINK
 sudo tar -xvzf xdebug-*.tgz
-cd $XDEBUG_VERSION
+
+cd ~/Downloads/$XDEBUG_VERSION
 sudo phpize
 sudo ./configure
 sudo make
 sudo cp modules/xdebug.so /usr/lib/php/$PHP_API_NR
 
-sudo rm -R xdebug*
-sudo rm package.xml
+sudo rm -R ~/Downloads/xdebug*
+sudo rm ~/Downloads/package.xml
 
 XDEBUG_CONF="/etc/php/$PHP_VERSION/apache2/conf.d/99-xdebug.ini"
 sudo touch $XDEBUG_CONF
@@ -112,8 +114,11 @@ sudo service apache2 restart
 # Premissões do diretório de projetos
 sudo chmod -R 0777 /var/www
 
+
 # Cria arquivo info.php
+sudo rm /var/www/html
 echo '<?php phpinfo();' >> /var/www/html/info.php
+sudo chmod -R 0777 /var/www/html/info.php
 
 # Instala MySQL
 sudo apt install mysql-server -y
@@ -194,8 +199,7 @@ echo  # nova linha
 #echo "Para Chrome Windows com WSL importe o arquivo server.crt"
 echo 'Concluído! Abra o link http://localhost/html/info.php'
 
-
-MYSQL_PASSWORD="MinhaNovaSenha"
+exit
 
 sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$MYSQL_PASSWORD'; flush privileges;exit;"
 
@@ -209,7 +213,6 @@ y
 y
 y
 EOF
-
 
 
 # Instala phpmyadmin - Desativar componente de validadeção de senha para evitar erro no phpmyadmin
