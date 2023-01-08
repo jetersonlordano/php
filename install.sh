@@ -47,7 +47,7 @@ echo  # nova linha
 
 
 # Instala o PHP e algumas extensões 
-sudo apt install php$PHP_VERSION php$PHP_VERSION-common php$PHP_VERSION-cli php$PHP_VERSION-fpm libapache2-mod-php libapache2-mod-php$PHP_VERSION php$PHP_VERSION-mysql php$PHP_VERSION-curl php$PHP_VERSION-memcached php$PHP_VERSION-dev php$PHP_VERSION-pgsql php$PHP_VERSION-sqlite3 php$PHP_VERSION-mbstring php$PHP_VERSION-gd php$PHP_VERSION-xmlrpc php$PHP_VERSION-xml php$PHP_VERSION-zip php$PHP_VERSION-bcmath php$PHP_VERSION-soap php$PHP_VERSION-intl php$PHP_VERSION-readline php$PHP_VERSION-tokenizer php$PHP_VERSION-imagick -y
+sudo apt install php$PHP_VERSION php$PHP_VERSION-common php$PHP_VERSION-gmp php$PHP_VERSION-cli php$PHP_VERSION-fpm libapache2-mod-php libapache2-mod-php$PHP_VERSION php$PHP_VERSION-mysql php$PHP_VERSION-curl php$PHP_VERSION-memcached php$PHP_VERSION-dev php$PHP_VERSION-pgsql php$PHP_VERSION-sqlite3 php$PHP_VERSION-mbstring php$PHP_VERSION-gd php$PHP_VERSION-xmlrpc php$PHP_VERSION-xml php$PHP_VERSION-zip php$PHP_VERSION-bcmath php$PHP_VERSION-soap php$PHP_VERSION-intl php$PHP_VERSION-readline php$PHP_VERSION-tokenizer php$PHP_VERSION-imagick -y
 
 
 echo  # nova linha
